@@ -1,0 +1,115 @@
+@extends('movie.mainLayout')
+
+@php
+    $formType = isset($formType) ? $formType : 'add';
+@endphp
+
+@section('title')
+    Add Movie
+@endsection
+
+@section('css')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/parsleyjs/src/parsley.css">
+@endsection
+
+@section('content')
+<!-- Movie Form -->
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Add New Movie</h4>
+                </div>
+                <div class="card-body">
+                    <form id="movie-form" data-parsley-validate enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Movie Title</label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{@$movie->title}}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Movie Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="4">{{@$movie->description}}</textarea>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <div class="col">
+                                <label for="runtime_hours" class="form-label">Runtime Hours</label>
+                                <input type="number" class="form-control" id="runtime_hours" name="runtime_hours" min="0" value="{{isset($movie->runtime) ? floor($movie->runtime / 60) : 0}}" required>
+                            </div>
+                            <div class="col">
+                                <label for="runtime_minutes" class="form-label">Runtime Minutes</label>
+                                <input type="number" class="form-control" id="runtime_minutes" name="runtime_minutes" min="0" max="59" value="{{isset($movie->runtime) ? $movie->runtime % 60 : 0}}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="imdb_rating" class="form-label">IMDb Rating</label>
+                            <input type="number" step="0.1" class="form-control" id="imdb_rating" name="imdb_rating" min="0" max="10" value="{{@$movie->imdb_rating}}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="published_at" class="form-label">Published Date</label>
+                            <input type="date" class="form-control" id="published_at" name="published_at" value="{{@$movie->published_at}}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Movie Poster</label>
+                            <input type="file" class="form-control" id="image" name="image" value="{{@$movie->image}}" accept="image/*">
+                        </div>
+                        @if(isset($formType) && $formType == 'edit')
+                            <button type="button" id="submit" class="btn btn-success">Update Movie</button>
+                        @else
+                            <button type="button" id="submit" class="btn btn-success">Add Movie</button>
+                        @endif
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('js')
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/parsleyjs"></script>
+<script>
+    $(document).on("click" , "#submit" , function(e){
+        e.preventDefault()
+        var valid = $('#movie-form').parsley().validate();
+        var formType = "{{ $formType }}"
+        if(valid){
+            var formData = new FormData($('#movie-form')[0]);
+            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+            formData.append('form_type', formType);
+            $.ajax({
+                type: "POST",
+                url: "{{ route('movie.store') }}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if(response && response.status == 'success'){
+                        $.notify( response.message, 'success' );
+
+                        setTimeout(() => {
+                            location.href = "{{ route('movie.list') }}";
+                        }, 1000);
+                    } else {
+                        $.notify( response.message, 'error' );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $.notify("Something went wrong !!", 'error' );
+                },
+            });
+        }
+    })
+
+
+</script>
+@endsection
+
+
