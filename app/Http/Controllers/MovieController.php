@@ -19,7 +19,6 @@ class MovieController extends Controller
 
     public function storeMovie(Request $request)
     {
-        dd($request->all());
         try {
 
             // Calculate total runtime in minutes
