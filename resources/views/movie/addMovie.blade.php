@@ -1,11 +1,15 @@
 @extends('movie.mainLayout')
 
 @php
-    $formType = isset($formType) ? $formType : 'add';
+    $movie_id = $movie->id ?? null;
 @endphp
 
 @section('title')
-    Add Movie
+    @if(isset($movie_id))
+        Edit Movie
+    @else
+        Add Movie
+    @endif
 @endsection
 
 @section('css')
@@ -57,9 +61,16 @@
 
                         <div class="mb-3">
                             <label for="image" class="form-label">Movie Poster</label>
-                            <input type="file" class="form-control" id="image" name="image" value="{{@$movie->image}}" accept="image/*">
+
+                            <div class="img-container text-center mb-3">
+                                <img id="uploaded-image" width="100"
+                                    src="{{ isset($movie->image) ? asset('storage/'.$movie->image) : '#' }}"
+                                    style="{{ isset($movie->image) ? '' : 'display: none;' }}">
+                            </div>
+
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
                         </div>
-                        @if(isset($formType) && $formType == 'edit')
+                        @if(isset($movie_id))
                             <button type="button" id="submit" class="btn btn-success">Update Movie</button>
                         @else
                             <button type="button" id="submit" class="btn btn-success">Add Movie</button>
@@ -79,11 +90,11 @@
     $(document).on("click" , "#submit" , function(e){
         e.preventDefault()
         var valid = $('#movie-form').parsley().validate();
-        var formType = "{{ $formType }}"
+        var movie_id = "{{ $movie_id }}"
         if(valid){
             var formData = new FormData($('#movie-form')[0]);
             formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-            formData.append('form_type', formType);
+            formData.append('movie_id', movie_id);
             $.ajax({
                 type: "POST",
                 url: "{{ route('movie.store') }}",
@@ -108,7 +119,21 @@
         }
     })
 
+    $(document).on('change', '#image', function () {
+        const input = this;
 
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#uploaded-image')
+                    .attr('src', e.target.result)
+                    .show();
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
 </script>
 @endsection
 

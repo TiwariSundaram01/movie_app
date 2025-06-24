@@ -20,33 +20,76 @@ class MovieController extends Controller
     public function storeMovie(Request $request)
     {
         try {
-
-            // Calculate total runtime in minutes
-            $runTime = ($request->input('runtime_hours') * 60) + $request->input('runtime_minutes');
-
+            $id = null;
             $imagePath = null;
 
+            if(isset($request->movie_id)){
+                $id = $request->movie_id;
+                $movie = Movie::find($id);
+
+                if(!empty($movie)) {
+                    $imagePath = $movie['image'];
+                } else {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Movie not found!'
+                    ], 200);
+                }
+                
+            }
+            
             // Handle image upload
             if ($request->hasFile('image')) {
+
+                // Delete old image if it exists
+                if (isset($imagePath)) {
+                    $oldImagePath = public_path('storage/' . $imagePath);
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+
                 $imgType = $request->file('image')->extension();
                 $imgName = time() . "." . $imgType;
                 $imagePath = $request->file('image')->storeAs('movies', $imgName, 'public');
             }
 
-            // Save movie record
-            Movie::create([
-                'user_id' => Auth::id(),
-                'title' => $request->title,
-                'description' => $request->description,
-                'runtime' => $runTime,
-                'imdb_rating' => $request->imdb_rating,
-                'published_at' => $request->published_at,
-                'image' => $imagePath,
-            ]);
+            // Calculate total runtime in minutes
+            $runTime = ($request->input('runtime_hours') * 60) + $request->input('runtime_minutes');
 
+            if(isset($id)){
+                // update movie record
+                Movie::where('id', $id)->update([
+                    'user_id' => Auth::id(),
+                    'title' => $request->title,
+                    'description' => $request->description,
+                    'runtime' => $runTime,
+                    'imdb_rating' => $request->imdb_rating,
+                    'published_at' => $request->published_at,
+                    'image' => $imagePath,
+                ]);
+
+                $message = 'Movie updated successfully!';
+
+            }else{
+                // Save movie record
+                Movie::create([
+                    'user_id' => Auth::id(),
+                    'title' => $request->title,
+                    'description' => $request->description,
+                    'runtime' => $runTime,
+                    'imdb_rating' => $request->imdb_rating,
+                    'published_at' => $request->published_at,
+                    'image' => $imagePath,
+                ]);
+
+                $message = 'Movie added successfully!';
+
+            }
+        
             return response()->json([
                 'status' => 'success',
-                'message' => 'Movie added successfully!'
+                'message' => $message
             ], 201);
 
         } catch (\Exception $e) {
