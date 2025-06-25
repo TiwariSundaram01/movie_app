@@ -23,7 +23,7 @@
         <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Add New Movie</h4>
+                    <h4 class="mb-0">{{ isset($movie_id) ? 'Edit Movie' : 'Add New Movie' }}</h4>
                 </div>
                 <div class="card-body">
                     <form id="movie-form" data-parsley-validate enctype="multipart/form-data">

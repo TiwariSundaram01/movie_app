@@ -29,6 +29,44 @@
         align-items: center;
         margin-bottom: 10px;
     }
+        .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+        font-size: 2rem;
+        position: relative;
+    }
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+    .star-rating label {
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #f8ce0b;
+    }
+    .rating-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+    }
+    .rating-title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .pointer-none {
+        pointer-events: none
+    }
+    .cursor-not-allowed {
+        cursor: not-allowed;
+    }
 </style>
 @endsection
 
@@ -85,6 +123,42 @@
                 } else {
                     $.notify(response.message, 'error');
                 }
+            },
+            error: function(xhr, status, error) {
+                $.notify("Something went wrong !!", 'error' );
+            },
+        });
+    });
+
+    $(document).on('click', '#submit-rating', function (e) {
+        e.preventDefault();
+        var rating = $('input.rate:checked').val();
+        var token = $('meta[name="csrf-token"]').attr('content');
+
+        if(rating == '' || rating == undefined){
+            $('#rating-error').text('Add Rating from ( 0 - 10 )')
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('rating.store') }}",
+            data: {
+                movie_id:  $("#movie_id").val(),
+                rating: rating,
+                _token: token
+            },
+            success: function (response) {
+                if(response.success) {
+                    $.notify(response.message, 'success');
+                    setTimeout(() => {
+                        location.href = "{{ route('movie.list') }}";
+                    }, 1000);
+                } else {
+                    $.notify(response.message, 'error');
+                }
+
+                $('#ratingModal').remove();
             },
             error: function(xhr, status, error) {
                 $.notify("Something went wrong !!", 'error' );
