@@ -2,18 +2,19 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+// Public Routes
+Route::post('/register', [ApiController::class, 'register'])->name('auth.register');
+Route::post('/login', [ApiController::class, 'login'])->name('auth.login');
+Route::post('/logout', [ApiController::class, 'logout'])->name('auth.logout')->middleware('auth:sanctum');
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Protected Routes
+Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('movie')->group(function () {
+        Route::get('/', [ApiController::class, 'listMovies'])->name('movies.list');
+        Route::get('/{id}', [ApiController::class, 'showMovie'])->name('movies.show');
+    });
 });
+
+?>
