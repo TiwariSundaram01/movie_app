@@ -20,6 +20,11 @@
     <div class="container">
         <a class="navbar-brand" href="#">MovieApp</a>
         <div class="collapse navbar-collapse justify-content-end">
+            @if(!empty(userData()))
+                <strong class="mx-3">
+                    <i class="bi bi-person-fill"></i> {{ userData()['name'] ?? ''}}
+                </strong>
+            @endif
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <form method="GET" action="{{ route('auth.logout') }}">

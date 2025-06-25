@@ -98,6 +98,9 @@
             success: function (response) {
                 if(response.success) {
                     $.notify(response.message, 'success');
+                    setTimeout(() => {
+                        location.href = "{{ route('movie.list') }}";
+                    }, 1000);
                 } else {
                     $.notify(response.message, 'error');
                 }

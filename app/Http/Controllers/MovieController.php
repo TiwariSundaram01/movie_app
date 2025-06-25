@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Movie;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Rating;
+use Illuminate\Support\Facades\Gate;
 
 class MovieController extends Controller
 {
@@ -27,6 +28,10 @@ class MovieController extends Controller
             if(isset($request->movie_id)){
                 $id = $request->movie_id;
                 $movie = Movie::find($id);
+
+                if (Gate::denies('update', $movie)) {
+                    return redirect()->back()->with('error', 'You are not authorized to edit this movie.');
+                }
 
                 if(!empty($movie)) {
                     $imagePath = $movie['image'];
@@ -65,7 +70,6 @@ class MovieController extends Controller
                     'title' => $request->title,
                     'description' => $request->description,
                     'runtime' => $runTime,
-                    'imdb_rating' => $request->imdb_rating,
                     'published_at' => $request->published_at,
                     'image' => $imagePath,
                 ]);
@@ -79,7 +83,6 @@ class MovieController extends Controller
                     'title' => $request->title,
                     'description' => $request->description,
                     'runtime' => $runTime,
-                    'imdb_rating' => $request->imdb_rating,
                     'published_at' => $request->published_at,
                     'image' => $imagePath,
                 ]);
@@ -115,6 +118,10 @@ class MovieController extends Controller
         $id = $request->id;
         $movie = Movie::getMovieById($id);
 
+        if (Gate::denies('update', $movie)) {
+            return redirect()->back()->with('error', 'You are not authorized to update this movie.');
+        }
+
         return view('movie.addMovie' , compact('movie'));
     }
 
@@ -125,6 +132,10 @@ class MovieController extends Controller
         // Find the movie
         $movie = Movie::find($movie_id);
 
+        if (Gate::denies('delete', $movie)) {
+            return redirect()->back()->with('error', 'You are not authorized to delete this movie.');
+        }
+            
         if (!$movie) {
             return response()->json([
                 'status' => false,

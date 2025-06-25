@@ -34,10 +34,12 @@
 
 @section('content')
 
-<!-- Add Movie -->
-<div class="ms-auto">
-    <a href="{{ route('movie.add') }}" class="btn btn-primary">Add Movie</a>
-</div>
+@if(isAdmin())
+    <!-- Add Movie -->
+    <div class="ms-auto">
+        <a href="{{ route('movie.add') }}" class="btn btn-primary">Add Movie</a>
+    </div>
+@endif
 
 <!-- Movie Cards -->
 <div class="container mt-4">

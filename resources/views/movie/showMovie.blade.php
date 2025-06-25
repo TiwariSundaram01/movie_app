@@ -59,8 +59,12 @@
                 <a href="{{ route('movie.list') }}" class="btn btn-primary mt-3">Back to Movies</a>
                 @if(isset($movie->id))
                 <div>
-                    <a href="{{ route('movie.edit',$movie->id) }}" class="btn btn-warning mt-3">Update</a>
-                    <div id="delete-movie" data-movie_id="{{ $movie->id }}" class="btn btn-danger mt-3">Delete</div>
+                    @can('update', $movie)
+                        <a href="{{ route('movie.edit',$movie->id) }}" class="btn btn-warning mt-3">Update</a>
+                    @endcan
+                    @can('delete', $movie)
+                        <div id="delete-movie" data-movie_id="{{ $movie->id }}" class="btn btn-danger mt-3">Delete</div>
+                    @endcan
                 </div>
                 @endif
             </div>

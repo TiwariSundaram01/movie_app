@@ -50,11 +50,6 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="imdb_rating" class="form-label">IMDb Rating</label>
-                            <input type="number" step="0.1" class="form-control" id="imdb_rating" name="imdb_rating" min="0" max="10" value="{{@$movie->imdb_rating}}" required>
-                        </div>
-
-                        <div class="mb-3">
                             <label for="published_at" class="form-label">Published Date</label>
                             <input type="date" class="form-control" id="published_at" name="published_at" value="{{@$movie->published_at}}" required>
                         </div>
