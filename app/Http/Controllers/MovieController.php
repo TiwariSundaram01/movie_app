@@ -114,9 +114,8 @@ class MovieController extends Controller
     public function editMovie(Request $request) {
         $id = $request->id;
         $movie = Movie::getMovieById($id);
-        $formType = 'edit';
 
-        return view('movie.addMovie' , compact('movie','formType'));
+        return view('movie.addMovie' , compact('movie'));
     }
 
     public function deleteMovie(Request $request)

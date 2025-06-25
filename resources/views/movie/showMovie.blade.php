@@ -11,24 +11,24 @@
 
             <div class="card shadow rounded-3">
                 <div class="row g-0">
-                    @if($movie->image)
+                    @if(isset($movie->image))
                         <div class="col-md-4">
                             <img src="{{ asset('storage/' . $movie->image) }}" class="img-fluid rounded-start" alt="{{ $movie->title }}">
                         </div>
                     @endif
 
-                    <div class="{{ $movie->image ? 'col-md-8' : 'col-md-12' }}">
+                    <div class="{{ isset($movie->image) ? 'col-md-8' : 'col-md-12' }}">
                         <div class="card-body">
                             <h3 class="card-title">{{ $movie->title ?? 'Not Added' }}</h3>
 
-                            @if($movie->description)
+                            @if(isset($movie->description))
                                 <p class="card-text text-muted">
                                     <strong>Description:</strong><br>
                                     {{ $movie->description }}
                                 </p>
                             @endif
 
-                            @if($movie->runtime)
+                            @if(isset($movie->runtime))
                                 <p class="card-text">
                                     <strong>Runtime:</strong>
                                     {{ isset($movie->runtime) ? floor($movie->runtime / 60) : 0 }}h {{ isset($movie->runtime) ? $movie->runtime % 60 : 0 }}m
@@ -57,10 +57,12 @@
             </div>
             <div class="d-flex justify-content-between mb-5">
                 <a href="{{ route('movie.list') }}" class="btn btn-primary mt-3">Back to Movies</a>
+                @if(isset($movie->id))
                 <div>
                     <a href="{{ route('movie.edit',$movie->id) }}" class="btn btn-warning mt-3">Update</a>
-                    <a href="javascipt:void(0)" id="delete-movie" data-movie_id="{{ $movie->id }}" class="btn btn-danger mt-3">Delete</a>
+                    <div id="delete-movie" data-movie_id="{{ $movie->id }}" class="btn btn-danger mt-3">Delete</div>
                 </div>
+                @endif
             </div>
         </div>
     </div>

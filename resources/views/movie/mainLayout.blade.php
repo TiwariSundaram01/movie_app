@@ -82,5 +82,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
 @yield('js')
 
+@if (session('error'))
+    <script>
+        $(document).ready(function() {
+            $.notify("{{ session('error') }}", {
+                className: 'error',
+                globalPosition: 'top right'
+            });
+        });
+    </script>
+@endif
 </body>
 </html>

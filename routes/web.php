@@ -22,14 +22,24 @@ Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
-    Route::get('/movie/list', [MovieController::class, 'index'])->name('movie.list');
-    Route::get('/movie/add', [MovieController::class, 'addMovie'])->name('movie.add');
-    Route::post('/movie/store', [MovieController::class, 'storeMovie'])->name('movie.store');
-    Route::get('/movie/{id}', [MovieController::class, 'showMovie'])->name('movie.show');
-    Route::get('/movie/edit/{id}', [MovieController::class, 'editMovie'])->name('movie.edit');
-    Route::get('/rating/add', [MovieController::class, 'addRating'])->name('rating.add');
-    Route::post('/rating/store', [MovieController::class, 'storeRating'])->name('rating.store');
-    Route::post('/movie/delete',[MovieController::class, 'deleteMovie'])->name('movie.delete');
+
+    Route::prefix('movie')->group(function () {
+        Route::get('/list', [MovieController::class, 'index'])->name('movie.list');
+        Route::get('/show/{id}', [MovieController::class, 'showMovie'])->name('movie.show');
+    });
+   
+    Route::prefix('rating')->group(function () {
+        Route::get('/add', [MovieController::class, 'addRating'])->name('rating.add');
+        Route::post('/store', [MovieController::class, 'storeRating'])->name('rating.store');
+    });
 });
 
+Route::middleware(['auth:sanctum', 'is.admin'])->group(function () {
+    Route::prefix('movie')->group(function () {
+        Route::get('/add', [MovieController::class, 'addMovie'])->name('movie.add');
+        Route::get('/edit/{id}', [MovieController::class, 'editMovie'])->name('movie.edit');
+        Route::post('/store', [MovieController::class, 'storeMovie'])->name('movie.store');
+        Route::post('/delete',[MovieController::class, 'deleteMovie'])->name('movie.delete');
+    });
+});
 ?>
