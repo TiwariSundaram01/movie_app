@@ -119,6 +119,41 @@ class MovieController extends Controller
         return view('movie.addMovie' , compact('movie','formType'));
     }
 
+    public function deleteMovie(Request $request)
+    {
+        $movie_id = $request->id;
+
+        // Find the movie
+        $movie = Movie::find($movie_id);
+
+        if (!$movie) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Movie not found.'
+            ]);
+        }
+
+        try {
+            // Delete associated ratings
+            Rating::where('movie_id', $movie_id)->delete();
+
+            // Delete movie
+            $movie->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Movie deleted successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to delete movie.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
     public function addRating(Request $request)
     {
         $movie_id = $request->movie_id;

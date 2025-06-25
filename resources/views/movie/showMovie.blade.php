@@ -59,10 +59,44 @@
                 <a href="{{ route('movie.list') }}" class="btn btn-primary mt-3">Back to Movies</a>
                 <div>
                     <a href="{{ route('movie.edit',$movie->id) }}" class="btn btn-warning mt-3">Update</a>
-                    <a href="{{ route('movie.list') }}" class="btn btn-danger mt-3">Delete</a>
+                    <a href="javascipt:void(0)" id="delete-movie" data-movie_id="{{ $movie->id }}" class="btn btn-danger mt-3">Delete</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('js')
+<script>
+    $(document).on('click', '#delete-movie', function() {
+        var movie_id = $(this).data('movie_id');
+        var isConfirmed = confirm('Are you sure you want to delete this movie?');
+
+        if(isConfirmed) {
+            $.ajax({
+                url: "{{ route('movie.delete') }}",
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    id: movie_id
+                },
+                success: function(response) {
+                    if(response.status) {
+                        $.notify(response.message, 'success');
+                        
+                        setTimeout(() => {
+                            location.href = "{{ route('movie.list') }}";
+                        }, 1000);
+                    }else {
+                        $.notify(response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    $.notify('Something went wrong !!', 'error');
+                }
+            });
+        }
+    });
+</script>
 @endsection

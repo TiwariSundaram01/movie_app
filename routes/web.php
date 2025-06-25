@@ -29,6 +29,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/movie/edit/{id}', [MovieController::class, 'editMovie'])->name('movie.edit');
     Route::get('/rating/add', [MovieController::class, 'addRating'])->name('rating.add');
     Route::post('/rating/store', [MovieController::class, 'storeRating'])->name('rating.store');
+    Route::post('/movie/delete',[MovieController::class, 'deleteMovie'])->name('movie.delete');
 });
 
 ?>
