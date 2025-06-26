@@ -10,6 +10,19 @@
         .main-content {
             min-height: 70vh;
         }
+
+        #notif-count {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            font-size: 10px;
+            padding: 4px;
+            border-radius: 50%;
+        }
+
+        #notifDropdown {
+            position: relative;
+        }
     </style>
     @yield('css')
 </head>
@@ -20,6 +33,18 @@
     <div class="container">
         <a class="navbar-brand" href="#">MovieApp</a>
         <div class="collapse navbar-collapse justify-content-end">
+            <li class="nav-item dropdown" style="list-style: none">
+                <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                    🔔 <span id="notif-count" class="badge bg-danger"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notifDropdown">
+                    <li><h6 class="dropdown-header">Notifications</h6></li>
+                    <div id="notif-list"></div>
+                </ul>
+            </li>
+
+
             @if(!empty(userData()))
                 <strong class="mx-3">
                     <i class="bi bi-person-fill"></i> {{ userData()['name'] ?? ''}}
@@ -97,5 +122,36 @@
         });
     </script>
 @endif
+<script>
+    function loadNotifications() {
+        $.get('/notifications', function(notifs) {
+            $('#notif-count').text(notifs.length);
+
+            let list = '';
+            notifs.forEach(function(notif) {
+                const description = notif.data.description.length > 50 
+                    ? notif.data.description.substring(0, 50) + '...' 
+                    : notif.data.description;
+
+                list += `<li>
+                            <a href="${notif.data.url}" class="dropdown-item">
+                                <strong>${notif.data.title}</strong><br>
+                                ${description}
+                            </a>
+                         </li>
+                         <li><hr class="dropdown-divider"></li>`;
+            });
+
+            if(notifs.length === 0){
+                list = '<span class="dropdown-item">No new notifications</span>';
+            }
+
+            $('#notif-list').html(list);
+        });
+    }
+
+    loadNotifications()
+    setInterval(loadNotifications, 10000); // Refresh every 10 seconds
+</script>
 </body>
 </html>

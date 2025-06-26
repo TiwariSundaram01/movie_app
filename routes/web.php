@@ -32,6 +32,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/add', [MovieController::class, 'addRating'])->name('rating.add');
         Route::post('/store', [MovieController::class, 'storeRating'])->name('rating.store');
     });
+
+    Route::get('/notifications', function() {
+        return auth()->user()->unreadNotifications;
+    });
 });
 
 Route::middleware(['auth:sanctum', 'is.admin'])->group(function () {

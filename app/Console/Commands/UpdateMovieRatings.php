@@ -30,7 +30,8 @@ class UpdateMovieRatings extends Command
     public function handle()
     {
         try {
-             Log::info('Starting movie rating update job.');
+            
+            Log::info('Starting movie rating update job.');
 
             $startDate = Carbon::now()->subMonth()->startOfMonth();
             $endDate = Carbon::now()->subMonth()->endOfMonth();
