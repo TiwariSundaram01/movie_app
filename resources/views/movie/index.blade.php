@@ -82,7 +82,7 @@
 <!-- Movie Cards -->
 <div class="container mt-4">
     <div class="row">
-        @forelse ( $moviesData ?? [] as $movie )
+        @forelse ( $movies ?? [] as $movie )
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     <img src="{{ isset($movie->image) ? asset('storage/' . $movie->image) : '' }}" class="card-img-top" alt="Movie {{ $loop->iteration }}" style="height: 250px; object-fit: cover;">
@@ -100,6 +100,7 @@
         @empty
             No Movies Added.
         @endforelse
+        {{ $movies->links() }}
     </div>
 </div>
 @endsection

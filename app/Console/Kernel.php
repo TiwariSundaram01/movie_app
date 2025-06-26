@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('movies:update-ratings')
+            ->runInBackground()
+            ->withoutOverlapping()
+            ->dailyAt('20:00') // runs daily at 8 PM
+            ->timezone('Asia/Kolkata'); 
     }
 
     /**

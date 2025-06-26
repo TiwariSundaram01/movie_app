@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Gate;
 class MovieController extends Controller
 {
     public function index(){
-        $moviesData = Movie::take(10)->get();
-        return view('movie.index' , compact('moviesData'));
+        $movies = Movie::paginate(9);
+        return view('movie.index' , compact('movies'));
     }
 
     public function addMovie(){
