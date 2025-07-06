@@ -1,4 +1,3 @@
-````md
 # 🎬 Movie App - Laravel Project
 
 A fully functional Laravel-based movie application with:
@@ -15,7 +14,8 @@ A fully functional Laravel-based movie application with:
 ## 📸 Screenshots
 
 ### 🔹 Add New Movie Form  
-![Add movies](https://github.com/user-attachments/assets/7f8e898a-3c1b-42ad-a18f-53567996ef86)
+![Add movies](https://github.com/user-attachments/assets/c947a0cd-5532-43e7-a05c-122d06030691)
+
 
 ### 🔹 Add Rating Modal  
 ![Add rating](https://github.com/user-attachments/assets/76e5473d-7c6f-4e43-baef-c2f9b1c28792)
