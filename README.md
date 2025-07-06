@@ -1,110 +1,160 @@
+````md
 # 🎬 Movie App - Laravel Project
 
-A fully functional Laravel-based movie application with authentication, movie management, rating system, APIs, and push notifications.
+A fully functional Laravel-based movie application with:
+
+- ✅ Authentication (Login/Register)
+- 🎞 Movie management (CRUD for Admin)
+- ⭐ Rating system
+- 🔔 Push notifications
+- 🔐 Token-based API access using Sanctum
+- 🕒 Daily scheduled tasks (rating updates)
 
 ---
 
 ## 📸 Screenshots
 
-### 🔹 Add New Movie Form
-
+### 🔹 Add New Movie Form  
 ![Add movies](https://github.com/user-attachments/assets/7f8e898a-3c1b-42ad-a18f-53567996ef86)
 
-
-### 🔹 Add Rating Modal
-
+### 🔹 Add Rating Modal  
 ![Add rating](https://github.com/user-attachments/assets/76e5473d-7c6f-4e43-baef-c2f9b1c28792)
 
-
-### 🔹 Homepage with Notifications
-
+### 🔹 Homepage with Notifications  
 ![homepage with notification](https://github.com/user-attachments/assets/a36dfd8e-b754-4939-80a2-e35080efc486)
 
-
-### 🔹 Login Page
-
+### 🔹 Login Page  
 ![Login](https://github.com/user-attachments/assets/e9860517-f2a5-4a4c-81a8-05bff7c143e4)
 
-
-### 🔹 Register Page
-
+### 🔹 Register Page  
 ![Register](https://github.com/user-attachments/assets/e9f98f46-e818-4fe1-a83d-810f28b3e46f)
-
 
 ---
 
 ## 🚀 Features
 
 ### ✅ User Features (Frontend)
-
-* Login/Register system
-* List all movies with:
-
-  * Poster
-  * Title
-  * Publication date
-  * View more button
-* Movie detail view with:
-
-  * Description
-  * Runtime (hours + minutes)
-  * IMDb rating
-  * Poster
-* ⭐ Rate a movie (1–10 stars)
-
-  * Edit existing rating
-* 🔔 See push notifications at the top bar
-* 💡 Responsive and clean UI with Bootstrap
+- Register/Login
+- List all movies with poster, title, publish date, and detail button
+- View single movie with description, runtime, rating, and image
+- Submit and update rating (1–10)
+- View latest push notifications in top bar
+- Responsive Bootstrap design
 
 ---
 
 ### ✅ Admin Features (Backend)
-
-* Admin can add/edit/delete their own movies
-* Movie poster upload
-* Laravel Policy ensures only the creator can update/delete
-* Push notifications via Artisan command
-* Scheduled jobs update average ratings every day at **8:00 PM**
-* Authenticated API access using **Laravel Sanctum**
-
----
-
-## 🔐 API Features
-
-* Prefix: `/api/v1`
-* Auth required (Sanctum Token)
-* Routes to:
-
-  * Get all movies
-  * View single movie
-  * Rate a movie
-  * Auth endpoints (register/login)
+- Add, edit, delete movies
+- Poster upload
+- Only movie creators can update/delete (via Laravel Policies)
+- Send push notifications via Artisan command
+- Update ratings daily via scheduled job
+- Sanctum-protected API access
 
 ---
 
-## ⚙️ Setup Instructions
+## 🔄 Web Routes
 
-### 1️⃣ Clone the Repository
+### 🔓 Public Routes
+
+| Route        | Method | Description                  |
+|--------------|--------|------------------------------|
+| `/`          | GET    | Show register page           |
+| `/add_admin` | GET    | Show register page for admin |
+| `/login`     | GET    | Show login page              |
+| `/register`  | POST   | Handle user registration     |
+| `/login`     | POST   | Handle user login            |
+
+---
+
+### 🔐 Authenticated User Routes (`auth:sanctum`)
+
+| Route                | Method | Description                   |
+|----------------------|--------|-------------------------------|
+| `/logout`            | GET    | Logout                        |
+| `/movie/list`        | GET    | Show all movies               |
+| `/movie/show/{id}`   | GET    | Show details of a movie       |
+| `/rating/add`        | GET    | Show rating form              |
+| `/rating/store`      | POST   | Store/update a user rating    |
+| `/notifications`     | GET    | Fetch unread notifications    |
+
+---
+
+### 🛡 Admin Routes (`auth:sanctum`, `is.admin`)
+
+| Route                | Method | Description                   |
+|----------------------|--------|-------------------------------|
+| `/movie/add`         | GET    | Add new movie form            |
+| `/movie/edit/{id}`   | GET    | Edit movie form               |
+| `/movie/store`       | POST   | Store new or edited movie     |
+| `/movie/delete`      | POST   | Delete a movie                |
+
+---
+
+## 🛠 Artisan Command
+
+### 🔔 Send Push Notification to All Users
+
+```bash
+php artisan send:movie-notification
+````
+
+* Sends latest movie's title and description to all users
+* Notifications are shown on top of the frontend
+
+---
+
+## ⏱ Scheduler
+
+A scheduled job runs **daily at 8:00 PM** to update IMDb ratings based on last month’s user reviews.
+
+### 🔧 Crontab Setup
+
+Add this line to your server’s cron:
+
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+---
+
+## 🔐 API Routes (Prefix `/api/v1`)
+
+All routes require Sanctum Token except login/register.
+
+| Route                      | Method | Auth | Description         |
+| -------------------------- | ------ | ---- | ------------------- |
+| `/api/v1/register`         | POST   | ❌    | Register a user     |
+| `/api/v1/login`            | POST   | ❌    | Login and get token |
+| `/api/v1/movies`           | GET    | ✅    | List all movies     |
+| `/api/v1/movies/{id}`      | GET    | ✅    | View a single movie |
+| `/api/v1/movies/{id}/rate` | POST   | ✅    | Rate a movie        |
+
+---
+
+## ⚙️ Installation Guide
+
+### 1️⃣ Clone the repository
 
 ```bash
 git clone https://github.com/TiwariSundaram01/movie_app.git
 cd movie_app
 ```
 
-### 2️⃣ Install Dependencies
+### 2️⃣ Install dependencies
 
 ```bash
 composer install
 npm install && npm run dev
 ```
 
-### 3️⃣ Create `.env` File
+### 3️⃣ Configure `.env` file
 
 ```bash
 cp .env.example .env
 ```
 
-Update DB credentials and app details in `.env`:
+Update database and app info:
 
 ```env
 DB_DATABASE=movie_app
@@ -113,19 +163,19 @@ DB_PASSWORD=
 APP_URL=http://127.0.0.1:8000
 ```
 
-### 4️⃣ Generate App Key
+### 4️⃣ Generate application key
 
 ```bash
 php artisan key:generate
 ```
 
-### 5️⃣ Run Migrations
+### 5️⃣ Run migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 6️⃣ Start Server
+### 6️⃣ Start the server
 
 ```bash
 php artisan serve
@@ -135,54 +185,28 @@ Visit: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ---
 
-## 🛠 Artisan Commands
+## 🧪 API Testing
 
-### 📤 Push Notification Command
+Use Postman or similar:
 
-Sends a push notification with the movie's title and description.
+1. Register or login to get token
+2. Add this in headers:
 
-```bash
-php artisan notify:movie "Movie Title" "Movie Description"
+```
+Authorization: Bearer <token>
+```
+
+Example test:
+
+```http
+GET /api/v1/movies
+POST /api/v1/movies/5/rate
 ```
 
 ---
 
-## ⏱ Scheduler
-
-A cron job runs every day at **8:00 PM** and updates the IMDb ratings for all movies based on the past month's user ratings.
-
-Add this to your server cron:
-
-```
-* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
-```
-
----
-
-## 🧪 Testing APIs (Optional)
-
-Use Postman or any REST client.
-
-### Authentication
-
-* `POST /api/v1/register`
-* `POST /api/v1/login`
-
-Include Bearer Token for the following:
-
-* `GET /api/v1/movies`
-* `POST /api/v1/movies/{id}/rate`
-
----
-
-## 🧑‍💻 Developed By
+## 🙋‍♂️ Developed By
 
 **Sundaram Dinesh Tiwari**
-[GitHub Profile](https://github.com/TiwariSundaram01)
-
----
-
-## 🙋‍♂️ Need Help?
-
-If you encounter any issues, feel free to raise them in the GitHub Issues section or connect via LinkedIn.
+🔗 [GitHub](https://github.com/TiwariSundaram01)
 
